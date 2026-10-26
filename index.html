@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pixel Animator</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #0d0d12;
+    color: white;
+    height: 100vh;
+    overflow: hidden;
+}
+
+button,
+input {
+    font: inherit;
+}
+
+#app {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* TOP BAR */
+
+.topbar {
+    height: 58px;
+    flex-shrink: 0;
+    background: #16161f;
+    border-bottom: 1px solid #292938;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 12px;
+}
+
+.logo {
+    font-weight: 800;
+    font-size: 18px;
+    color: #a96cff;
+    margin-right: auto;
+}
+
+.topBtn {
+    background: #242433;
+    border: 1px solid #353548;
+    color: #eee;
+    padding: 8px 13px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.topBtn:hover {
+    background: #303044;
+}
+
+/* MAIN */
+
+.main {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+}
+
+/* TOOLBAR */
+
+.toolbar {
+    width: 72px;
+    flex-shrink: 0;
+    background: #14141c;
+    border-right: 1px solid #292938;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.tool {
+    width: 50px;
+    height: 50px;
+    background: #22222f;
+    border: 1px solid #343448;
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.tool:hover {
+    background: #2d2d40;
+}
+
+.tool.active {
+    background: #7135d2;
+    border-color: #a96cff;
+}
+
+/* CANVAS AREA */
+
+.workspace {
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+        radial-gradient(circle at center, #1d1d29 0, #111118 70%);
+    overflow: auto;
+}
+
+.canvasWrap {
+    position: relative;
+    box-shadow: 0 18px 55px rgba(0,0,0,.55);
+}
+
+#pixelCanvas {
+    display: block;
+    image-rendering: pixelated;
+    cursor: crosshair;
+    background: transparent;
+}
+
+/* SIDE PANEL */
+
+.sidebar {
+    width: 245px;
+    flex-shrink: 0;
+    background: #14141c;
+    border-left: 1px solid #292938;
+    padding: 15px;
+    overflow-y: auto;
+}
+
+.section {
+    margin-bottom: 23px;
+}
+
+.sectionTitle {
+    color: #aaaabd;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.colorRow {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+#colorPicker {
+    width: 62px;
+    height: 45px;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
+.palette {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 7px;
+}
+
+.swatch {
+    width: 35px;
+    height: 35px;
+    border-radius: 7px;
+    border: 2px solid #333342;
+    cursor: pointer;
+}
+
+.swatch:hover {
+    border-color: white;
+}
+
+.setting {
+    margin-bottom: 13px;
+}
+
+.setting label {
+    display: block;
+    font-size: 13px;
+    color: #c8c8d5;
+    margin-bottom: 6px;
+}
+
+.setting input[type="range"] {
+    width: 100%;
+}
+
+/* TIMELINE */
+
+.timeline {
+    height: 145px;
+    flex-shrink: 0;
+    background: #171720;
+    border-top: 1px solid #30303e;
+    display: flex;
+    flex-direction: column;
+}
+
+.timelineControls {
+    height: 45px;
+    display: flex;
+    align-items: center;
+    padding: 5px 12px;
+    gap: 8px;
+    border-bottom: 1px solid #292937;
+}
+
+.timelineControls button {
+    border: 0;
+    background: #29293a;
+    color: white;
+    border-radius: 6px;
+    padding: 7px 11px;
+    cursor: pointer;
+}
+
+.timelineControls button:hover {
+    background: #38384e;
+}
+
+#frames {
+    flex: 1;
+    display: flex;
+    gap: 8px;
+    padding: 10px;
+    align-items: flex-start;
+    overflow-x: auto;
+}
+
+.frame {
+    flex-shrink: 0;
+    width: 74px;
+    height: 74px;
+    background: #262636;
+    border: 2px solid #37374c;
+    border-radius: 8px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.frame.active {
+    border-color: #a96cff;
+    box-shadow: 0 0 0 2px rgba(169,108,255,.2);
+}
+
+.frame canvas {
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+}
+
+.frameNumber {
+    position: absolute;
+    bottom: 2px;
+    right: 4px;
+    font-size: 10px;
+    background: rgba(0,0,0,.7);
+    padding: 2px 4px;
+    border-radius: 4px;
+}
+
+.addFrame {
+    flex-shrink: 0;
+    width: 74px;
+    height: 74px;
+    background: #20202d;
+    color: #aaa;
+    border: 2px dashed #45455a;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 28px;
+}
+
+/* MODAL */
+
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.7);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+}
+
+.modalBox {
+    width: 360px;
+    background: #1e1e29;
+    padding: 22px;
+    border-radius: 14px;
+    border: 1px solid #363649;
+}
+
+.modalBox h2 {
+    margin-top: 0;
+}
+
+.modalBox input {
+    width: 100%;
+    background: #111118;
+    border: 1px solid #3c3c50;
+    color: white;
+    padding: 10px;
+    border-radius: 7px;
+    margin: 5px 0 14px;
+}
+
+.modalActions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.modalActions button {
+    border: 0;
+    border-radius: 7px;
+    padding: 9px 14px;
+    cursor: pointer;
+}
+
+.primary {
+    background: #7d42da;
+    color: white;
+}
+
+.secondary {
+    background: #343445;
+    color: white;
+}
+</style>
+</head>
+
+<body>
+
+<div id="app">
+
+    <div class="topbar">
+        <div class="logo">PIXEL ANIMATOR</div>
+
+        <button class="topBtn" onclick="newProject()">New</button>
+        <button class="topBtn" onclick="clearFrame()">Clear</button>
+        <button class="topBtn" onclick="downloadPNG()">Export PNG</button>
+    </div>
+
+    <div class="main">
+
+        <div class="toolbar">
+            <button class="tool active" data-tool="pencil" title="Pencil">✏️</button>
+            <button class="tool" data-tool="eraser" title="Eraser">⌫</button>
+            <button class="tool" data-tool="fill" title="Fill">🪣</button>
+            <button class="tool" data-tool="picker" title="Color Picker">💧</button>
+        </div>
+
+        <div class="workspace">
+            <div class="canvasWrap">
+                <canvas id="pixelCanvas"></canvas>
+            </div>
+        </div>
+
+        <div class="sidebar">
+
+            <div class="section">
+                <div class="sectionTitle">Color</div>
+
+                <div class="colorRow">
+                    <input id="colorPicker" type="color" value="#ffffff">
+                    <span id="colorText">#ffffff</span>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="sectionTitle">Palette</div>
+
+                <div class="palette" id="palette"></div>
+            </div>
+
+            <div class="section">
+                <div class="sectionTitle">Animation</div>
+
+                <div class="setting">
+                    <label>FPS: <span id="fpsText">8</span></label>
+                    <input id="fps" type="range" min="1" max="24" value="8">
+                </div>
+
+                <div class="setting">
+                    <label>
+                        <input id="onionSkin" type="checkbox">
+                        Onion Skin
+                    </label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="sectionTitle">Canvas</div>
+                <div id="canvasInfo">16 × 16</div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="timeline">
+
+        <div class="timelineControls">
+            <button onclick="previousFrame()">◀</button>
+            <button id="playButton" onclick="togglePlay()">▶ Play</button>
+            <button onclick="nextFrame()">▶</button>
+
+            <button onclick="duplicateFrame()">Duplicate</button>
+            <button onclick="deleteFrame()">Delete</button>
+        </div>
+
+        <div id="frames"></div>
+
+    </div>
+
+</div>
+
+<div class="modal" id="newProjectModal">
+    <div class="modalBox">
+
+        <h2>New Pixel Animation</h2>
+
+        <label>Width</label>
+        <input id="newWidth" type="number" min="4" max="128" value="16">
+
+        <label>Height</label>
+        <input id="newHeight" type="number" min="4" max="128" value="16">
+
+        <div class="modalActions">
+            <button class="secondary" onclick="closeNewProject()">Cancel</button>
+            <button class="primary" onclick="createNewProject()">Create</button>
+        </div>
+
+    </div>
+</div>
+
+<script>
+const canvas = document.getElementById("pixelCanvas");
+const ctx = canvas.getContext("2d");
+
+const displaySize = 512;
+
+let gridWidth = 16;
+let gridHeight = 16;
+
+let currentTool = "pencil";
+let currentColor = "#ffffff";
+
+let isDrawing = false;
+let playing = false;
+let playTimer = null;
+
+let currentFrame = 0;
+
+let frames = [];
+
+const paletteColors = [
+    "#000000",
+    "#ffffff",
+    "#ff4757",
+    "#ff9f43",
+    "#feca57",
+    "#2ed573",
+    "#1e90ff",
+    "#3742fa",
+    "#a55eea",
+    "#ff6bcb",
+    "#7f8c8d",
+    "#8e5c3a",
+    "#00d2d3",
+    "#2f3542",
+    "#ffa502"
+];
+
+function createEmptyFrame() {
+
+    return Array.from(
+        {length: gridHeight},
+        () => Array(gridWidth).fill(null)
+    );
+
+}
+
+function setupCanvas() {
+
+    canvas.width = displaySize;
+    canvas.height = displaySize;
+
+    canvas.style.width = displaySize + "px";
+    canvas.style.height = displaySize + "px";
+
+    document.getElementById("canvasInfo").textContent =
+        gridWidth + " × " + gridHeight;
+
+}
+
+function initialize() {
+
+    setupCanvas();
+
+    frames = [createEmptyFrame()];
+
+    renderPalette();
+    drawCanvas();
+    renderFrames();
+
+}
+
+function renderPalette() {
+
+    const palette = document.getElementById("palette");
+    palette.innerHTML = "";
+
+    paletteColors.forEach(color => {
+
+        const swatch = document.createElement("div");
+
+        swatch.className = "swatch";
+        swatch.style.background = color;
+
+        swatch.onclick = () => {
+            currentColor = color;
+            document.getElementById("colorPicker").value = color;
+            document.getElementById("colorText").textContent = color;
+        };
+
+        palette.appendChild(swatch);
+
+    });
+
+}
+
+function drawCanvas() {
+
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    const cellW = canvas.width / gridWidth;
+    const cellH = canvas.height / gridHeight;
+
+    // checkerboard background
+    for(let y=0;y<gridHeight;y++) {
+
+        for(let x=0;x<gridWidth;x++) {
+
+            ctx.fillStyle =
+                (x + y) % 2 === 0
+                ? "#d9d9d9"
+                : "#bcbcbc";
+
+            ctx.fillRect(
+                x * cellW,
+                y * cellH,
+                cellW,
+                cellH
+            );
+
+        }
+
+    }
+
+    // onion skin
+    const onion = document.getElementById("onionSkin").checked;
+
+    if(onion && currentFrame > 0 && !playing) {
+
+        ctx.globalAlpha = 0.22;
+
+        drawFramePixels(
+            frames[currentFrame - 1],
+            cellW,
+            cellH
+        );
+
+        ctx.globalAlpha = 1;
+
+    }
+
+    drawFramePixels(
+        frames[currentFrame],
+        cellW,
+        cellH
+    );
+
+    // grid
+    if(gridWidth <= 64 && gridHeight <= 64) {
+
+        ctx.strokeStyle = "rgba(0,0,0,.18)";
+        ctx.lineWidth = 1;
+
+        for(let x=0;x<=gridWidth;x++) {
+
+            ctx.beginPath();
+            ctx.moveTo(x * cellW,0);
+            ctx.lineTo(x * cellW,canvas.height);
+            ctx.stroke();
+
+        }
+
+        for(let y=0;y<=gridHeight;y++) {
+
+            ctx.beginPath();
+            ctx.moveTo(0,y * cellH);
+            ctx.lineTo(canvas.width,y * cellH);
+            ctx.stroke();
+
+        }
+
+    }
+
+}
+
+function drawFramePixels(frame,cellW,cellH) {
+
+    for(let y=0;y<gridHeight;y++) {
+
+        for(let x=0;x<gridWidth;x++) {
+
+            const color = frame[y][x];
+
+            if(color !== null) {
+
+                ctx.fillStyle = color;
+
+                ctx.fillRect(
+                    x * cellW,
+                    y * cellH,
+                    cellW,
+                    cellH
+                );
+
+            }
+
+        }
+
+    }
+
+}
+
+function getPixelPosition(event) {
+
+    const rect = canvas.getBoundingClientRect();
+
+    const x = Math.floor(
+        (event.clientX - rect.left) /
+        rect.width *
+        gridWidth
+    );
+
+    const y = Math.floor(
+        (event.clientY - rect.top) /
+        rect.height *
+        gridHeight
+    );
+
+    return {x,y};
+
+}
+
+function drawAt(x,y) {
+
+    if(
+        x < 0 ||
+        y < 0 ||
+        x >= gridWidth ||
+        y >= gridHeight
+    ) return;
+
+    if(currentTool === "pencil") {
+
+        frames[currentFrame][y][x] = currentColor;
+
+    }
+
+    if(currentTool === "eraser") {
+
+        frames[currentFrame][y][x] = null;
+
+    }
+
+    drawCanvas();
+
+}
+
+canvas.addEventListener("mousedown", event => {
+
+    const pos = getPixelPosition(event);
+
+    if(currentTool === "fill") {
+
+        floodFill(pos.x,pos.y,currentColor);
+        drawCanvas();
+        renderFrames();
+        return;
+
+    }
+
+    if(currentTool === "picker") {
+
+        const color = frames[currentFrame][pos.y][pos.x];
+
+        if(color) {
+
+            currentColor = color;
+
+            document.getElementById("colorPicker").value = color;
+            document.getElementById("colorText").textContent = color;
+
+        }
+
+        return;
+
+    }
+
+    isDrawing = true;
+
+    drawAt(pos.x,pos.y);
+
+});
+
+canvas.addEventListener("mousemove", event => {
+
+    if(!isDrawing) return;
+
+    const pos = getPixelPosition(event);
+
+    drawAt(pos.x,pos.y);
+
+});
+
+window.addEventListener("mouseup", () => {
+
+    if(isDrawing) {
+
+        isDrawing = false;
+        renderFrames();
+
+    }
+
+});
+
+function floodFill(startX,startY,newColor) {
+
+    const frame = frames[currentFrame];
+
+    const oldColor = frame[startY][startX];
+
+    if(oldColor === newColor) return;
+
+    const stack = [[startX,startY]];
+
+    while(stack.length) {
+
+        const [x,y] = stack.pop();
+
+        if(
+            x < 0 ||
+            y < 0 ||
+            x >= gridWidth ||
+            y >= gridHeight
+        ) continue;
+
+        if(frame[y][x] !== oldColor) continue;
+
+        frame[y][x] = newColor;
+
+        stack.push(
+            [x + 1,y],
+            [x - 1,y],
+            [x,y + 1],
+            [x,y - 1]
+        );
+
+    }
+
+}
+
+document.querySelectorAll(".tool").forEach(button => {
+
+    button.addEventListener("click", () => {
+
+        document
+            .querySelectorAll(".tool")
+            .forEach(b => b.classList.remove("active"));
+
+        button.classList.add("active");
+
+        currentTool = button.dataset.tool;
+
+    });
+
+});
+
+document
+.getElementById("colorPicker")
+.addEventListener("input",event => {
+
+    currentColor = event.target.value;
+
+    document.getElementById("colorText").textContent =
+        currentColor;
+
+});
+
+document
+.getElementById("onionSkin")
+.addEventListener("change",drawCanvas);
+
+const fpsSlider = document.getElementById("fps");
+
+fpsSlider.addEventListener("input", () => {
+
+    document.getElementById("fpsText").textContent =
+        fpsSlider.value;
+
+    if(playing) {
+
+        stopPlayback();
+        startPlayback();
+
+    }
+
+});
+
+function renderFrames() {
+
+    const container = document.getElementById("frames");
+
+    container.innerHTML = "";
+
+    frames.forEach((frame,index) => {
+
+        const element =
+            document.createElement("div");
+
+        element.className =
+            "frame" +
+            (index === currentFrame ? " active" : "");
+
+        const preview =
+            document.createElement("canvas");
+
+        preview.width = gridWidth;
+        preview.height = gridHeight;
+
+        const pctx =
+            preview.getContext("2d");
+
+        for(let y=0;y<gridHeight;y++) {
+
+            for(let x=0;x<gridWidth;x++) {
+
+                if(frame[y][x]) {
+
+                    pctx.fillStyle = frame[y][x];
+                    pctx.fillRect(x,y,1,1);
+
+                }
+
+            }
+
+        }
+
+        const label =
+            document.createElement("div");
+
+        label.className = "frameNumber";
+        label.textContent = index + 1;
+
+        element.appendChild(preview);
+        element.appendChild(label);
+
+        element.onclick = () => {
+
+            currentFrame = index;
+
+            drawCanvas();
+            renderFrames();
+
+        };
+
+        container.appendChild(element);
+
+    });
+
+    const add =
+        document.createElement("button");
+
+    add.className = "addFrame";
+    add.textContent = "+";
+    add.title = "Add Frame";
+
+    add.onclick = addFrame;
+
+    container.appendChild(add);
+
+}
+
+function addFrame() {
+
+    frames.push(createEmptyFrame());
+
+    currentFrame = frames.length - 1;
+
+    drawCanvas();
+    renderFrames();
+
+}
+
+function duplicateFrame() {
+
+    const duplicate =
+        frames[currentFrame].map(row => [...row]);
+
+    frames.splice(
+        currentFrame + 1,
+        0,
+        duplicate
+    );
+
+    currentFrame++;
+
+    drawCanvas();
+    renderFrames();
+
+}
+
+function deleteFrame() {
+
+    if(frames.length === 1) {
+
+        frames[0] = createEmptyFrame();
+
+        drawCanvas();
+        renderFrames();
+
+        return;
+
+    }
+
+    frames.splice(currentFrame,1);
+
+    currentFrame =
+        Math.min(
+            currentFrame,
+            frames.length - 1
+        );
+
+    drawCanvas();
+    renderFrames();
+
+}
+
+function previousFrame() {
+
+    currentFrame--;
+
+    if(currentFrame < 0)
+        currentFrame = frames.length - 1;
+
+    drawCanvas();
+    renderFrames();
+
+}
+
+function nextFrame() {
+
+    currentFrame =
+        (currentFrame + 1) %
+        frames.length;
+
+    drawCanvas();
+    renderFrames();
+
+}
+
+function togglePlay() {
+
+    if(playing) {
+
+        stopPlayback();
+
+    } else {
+
+        startPlayback();
+
+    }
+
+}
+
+function startPlayback() {
+
+    playing = true;
+
+    document.getElementById("playButton")
+        .textContent = "■ Stop";
+
+    const interval =
+        1000 /
+        Number(fpsSlider.value);
+
+    playTimer = setInterval(() => {
+
+        currentFrame =
+            (currentFrame + 1) %
+            frames.length;
+
+        drawCanvas();
+        renderFrames();
+
+    },interval);
+
+}
+
+function stopPlayback() {
+
+    playing = false;
+
+    clearInterval(playTimer);
+
+    document.getElementById("playButton")
+        .textContent = "▶ Play";
+
+    drawCanvas();
+
+}
+
+function clearFrame() {
+
+    frames[currentFrame] = createEmptyFrame();
+
+    drawCanvas();
+    renderFrames();
+
+}
+
+function newProject() {
+
+    document.getElementById("newProjectModal")
+        .style.display = "flex";
+
+}
+
+function closeNewProject() {
+
+    document.getElementById("newProjectModal")
+        .style.display = "none";
+
+}
+
+function createNewProject() {
+
+    gridWidth =
+        Math.max(
+            4,
+            Math.min(
+                128,
+                Number(
+                    document.getElementById("newWidth").value
+                )
+            )
+        );
+
+    gridHeight =
+        Math.max(
+            4,
+            Math.min(
+                128,
+                Number(
+                    document.getElementById("newHeight").value
+                )
+            )
+        );
+
+    currentFrame = 0;
+
+    frames = [
+        createEmptyFrame()
+    ];
+
+    setupCanvas();
+
+    closeNewProject();
+
+    drawCanvas();
+    renderFrames();
+
+}
+
+function createExportCanvas(frame) {
+
+    const exportCanvas =
+        document.createElement("canvas");
+
+    exportCanvas.width = gridWidth;
+    exportCanvas.height = gridHeight;
+
+    const exportCtx =
+        exportCanvas.getContext("2d");
+
+    for(let y=0;y<gridHeight;y++) {
+
+        for(let x=0;x<gridWidth;x++) {
+
+            if(frame[y][x]) {
+
+                exportCtx.fillStyle =
+                    frame[y][x];
+
+                exportCtx.fillRect(
+                    x,
+                    y,
+                    1,
+                    1
+                );
+
+            }
+
+        }
+
+    }
+
+    return exportCanvas;
+
+}
+
+function downloadPNG() {
+
+    const exportCanvas =
+        createExportCanvas(
+            frames[currentFrame]
+        );
+
+    const link =
+        document.createElement("a");
+
+    link.download = "pixel-frame-" +
+        (currentFrame + 1) +
+        ".png";
+
+    link.href =
+        exportCanvas.toDataURL("image/png");
+
+    link.click();
+
+}
+
+initialize();
+</script>
+
+</body>
+</html>
