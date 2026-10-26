@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Pixel Animator</title>
 
 <style>
@@ -10,13 +11,17 @@
     box-sizing: border-box;
 }
 
+:root {
+    color-scheme: dark;
+}
+
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background: #0d0d12;
-    color: white;
     height: 100vh;
     overflow: hidden;
+    background: #0d0d12;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 button,
@@ -24,46 +29,67 @@ input {
     font: inherit;
 }
 
-#app {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
+button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed !important;
 }
 
-/* TOP BAR */
+#app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* =========================
+   TOP BAR
+========================= */
 
 .topbar {
-    height: 58px;
+    height: 60px;
     flex-shrink: 0;
-    background: #16161f;
-    border-bottom: 1px solid #292938;
     display: flex;
     align-items: center;
+    gap: 10px;
     padding: 0 16px;
-    gap: 12px;
+    background: #16161f;
+    border-bottom: 1px solid #292938;
 }
 
 .logo {
-    font-weight: 800;
-    font-size: 18px;
-    color: #a96cff;
     margin-right: auto;
+    color: #b47aff;
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
 }
 
 .topBtn {
-    background: #242433;
-    border: 1px solid #353548;
-    color: #eee;
-    padding: 8px 13px;
-    border-radius: 8px;
+    padding: 9px 14px;
+    border: 1px solid #3b3b50;
+    border-radius: 9px;
+    background: #252535;
+    color: #f4f4fa;
     cursor: pointer;
+    transition: 0.15s;
 }
 
-.topBtn:hover {
-    background: #303044;
+.topBtn:hover:not(:disabled) {
+    background: #333348;
+    border-color: #555571;
 }
 
-/* MAIN */
+.exportGifBtn {
+    border-color: #7e4ac8;
+    background: #6f35c8;
+}
+
+.exportGifBtn:hover:not(:disabled) {
+    background: #834be0;
+}
+
+/* =========================
+   MAIN LAYOUT
+========================= */
 
 .main {
     flex: 1;
@@ -71,40 +97,46 @@ input {
     display: flex;
 }
 
-/* TOOLBAR */
+/* =========================
+   TOOLBAR
+========================= */
 
 .toolbar {
-    width: 72px;
+    width: 74px;
     flex-shrink: 0;
-    background: #14141c;
-    border-right: 1px solid #292938;
-    padding: 10px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 9px;
+    padding: 11px;
+    background: #14141c;
+    border-right: 1px solid #292938;
 }
 
 .tool {
-    width: 50px;
-    height: 50px;
-    background: #22222f;
-    border: 1px solid #343448;
+    width: 51px;
+    height: 51px;
+    border: 1px solid #363649;
+    border-radius: 11px;
+    background: #232331;
     color: white;
-    border-radius: 10px;
-    cursor: pointer;
     font-size: 20px;
+    cursor: pointer;
+    transition: 0.15s;
 }
 
 .tool:hover {
-    background: #2d2d40;
+    background: #303044;
 }
 
 .tool.active {
-    background: #7135d2;
-    border-color: #a96cff;
+    border-color: #b47aff;
+    background: #7237ce;
+    box-shadow: 0 0 0 3px rgba(180, 122, 255, 0.12);
 }
 
-/* CANVAS AREA */
+/* =========================
+   WORKSPACE
+========================= */
 
 .workspace {
     flex: 1;
@@ -113,235 +145,400 @@ input {
     display: flex;
     align-items: center;
     justify-content: center;
-    background:
-        radial-gradient(circle at center, #1d1d29 0, #111118 70%);
     overflow: auto;
+    padding: 30px;
+    background:
+        radial-gradient(circle at center, #222232 0%, #111118 72%);
 }
 
 .canvasWrap {
     position: relative;
-    box-shadow: 0 18px 55px rgba(0,0,0,.55);
+    flex-shrink: 0;
+    border: 1px solid #46465c;
+    box-shadow:
+        0 20px 65px rgba(0, 0, 0, 0.6),
+        0 0 0 7px rgba(0, 0, 0, 0.16);
 }
 
 #pixelCanvas {
     display: block;
-    image-rendering: pixelated;
-    cursor: crosshair;
+    width: 512px;
+    height: 512px;
     background: transparent;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    cursor: crosshair;
+    touch-action: none;
 }
 
-/* SIDE PANEL */
+/* =========================
+   SIDEBAR
+========================= */
 
 .sidebar {
-    width: 245px;
+    width: 250px;
     flex-shrink: 0;
+    overflow-y: auto;
+    padding: 16px;
     background: #14141c;
     border-left: 1px solid #292938;
-    padding: 15px;
-    overflow-y: auto;
 }
 
 .section {
-    margin-bottom: 23px;
+    margin-bottom: 25px;
 }
 
 .sectionTitle {
-    color: #aaaabd;
+    margin-bottom: 11px;
+    color: #a9a9ba;
     font-size: 12px;
-    font-weight: bold;
+    font-weight: 800;
+    letter-spacing: 0.8px;
     text-transform: uppercase;
-    margin-bottom: 10px;
 }
 
 .colorRow {
     display: flex;
-    gap: 10px;
     align-items: center;
+    gap: 11px;
 }
 
 #colorPicker {
-    width: 62px;
+    width: 64px;
     height: 45px;
+    padding: 0;
     border: 0;
+    border-radius: 8px;
     background: transparent;
     cursor: pointer;
+}
+
+#colorText {
+    color: #dedee8;
+    font-family: monospace;
+    font-size: 14px;
 }
 
 .palette {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 7px;
+    gap: 8px;
 }
 
 .swatch {
     width: 35px;
     height: 35px;
-    border-radius: 7px;
-    border: 2px solid #333342;
+    border: 2px solid #39394c;
+    border-radius: 8px;
     cursor: pointer;
+    transition: 0.12s;
 }
 
 .swatch:hover {
     border-color: white;
+    transform: scale(1.08);
 }
 
 .setting {
-    margin-bottom: 13px;
+    margin-bottom: 15px;
 }
 
 .setting label {
     display: block;
+    margin-bottom: 7px;
+    color: #d0d0db;
     font-size: 13px;
-    color: #c8c8d5;
-    margin-bottom: 6px;
 }
 
 .setting input[type="range"] {
     width: 100%;
+    accent-color: #9d62ef;
 }
 
-/* TIMELINE */
+.checkboxLabel {
+    display: flex !important;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.checkboxLabel input {
+    accent-color: #9d62ef;
+}
+
+.infoBox {
+    padding: 11px;
+    border: 1px solid #333346;
+    border-radius: 9px;
+    background: #20202c;
+    color: #ccccd9;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* =========================
+   TIMELINE
+========================= */
 
 .timeline {
-    height: 145px;
+    height: 150px;
     flex-shrink: 0;
-    background: #171720;
-    border-top: 1px solid #30303e;
     display: flex;
     flex-direction: column;
+    background: #171720;
+    border-top: 1px solid #30303e;
 }
 
 .timelineControls {
-    height: 45px;
+    height: 47px;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
-    padding: 5px 12px;
     gap: 8px;
+    padding: 6px 12px;
     border-bottom: 1px solid #292937;
 }
 
 .timelineControls button {
-    border: 0;
+    padding: 7px 11px;
+    border: 1px solid #3a3a4e;
+    border-radius: 7px;
     background: #29293a;
     color: white;
-    border-radius: 6px;
-    padding: 7px 11px;
     cursor: pointer;
 }
 
 .timelineControls button:hover {
-    background: #38384e;
+    background: #393950;
+}
+
+#frameStatus {
+    margin-left: auto;
+    color: #aaaabd;
+    font-size: 13px;
 }
 
 #frames {
     flex: 1;
     display: flex;
-    gap: 8px;
-    padding: 10px;
     align-items: flex-start;
+    gap: 9px;
     overflow-x: auto;
+    padding: 10px;
 }
 
 .frame {
-    flex-shrink: 0;
-    width: 74px;
-    height: 74px;
-    background: #262636;
-    border: 2px solid #37374c;
-    border-radius: 8px;
-    cursor: pointer;
     position: relative;
+    width: 76px;
+    height: 76px;
+    flex-shrink: 0;
     overflow: hidden;
+    border: 2px solid #3b3b50;
+    border-radius: 9px;
+    background:
+        linear-gradient(45deg, #bdbdbd 25%, transparent 25%),
+        linear-gradient(-45deg, #bdbdbd 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #bdbdbd 75%),
+        linear-gradient(-45deg, transparent 75%, #bdbdbd 75%),
+        #dddddd;
+    background-position: 0 0, 0 6px, 6px -6px, -6px 0;
+    background-size: 12px 12px;
+    cursor: pointer;
+}
+
+.frame:hover {
+    border-color: #787895;
 }
 
 .frame.active {
-    border-color: #a96cff;
-    box-shadow: 0 0 0 2px rgba(169,108,255,.2);
+    border-color: #b47aff;
+    box-shadow: 0 0 0 3px rgba(180, 122, 255, 0.18);
 }
 
 .frame canvas {
     width: 100%;
     height: 100%;
+    display: block;
     image-rendering: pixelated;
+    image-rendering: crisp-edges;
 }
 
 .frameNumber {
     position: absolute;
-    bottom: 2px;
     right: 4px;
+    bottom: 3px;
+    padding: 2px 5px;
+    border-radius: 5px;
+    background: rgba(0, 0, 0, 0.74);
+    color: white;
     font-size: 10px;
-    background: rgba(0,0,0,.7);
-    padding: 2px 4px;
-    border-radius: 4px;
+    pointer-events: none;
 }
 
 .addFrame {
+    width: 76px;
+    height: 76px;
     flex-shrink: 0;
-    width: 74px;
-    height: 74px;
+    border: 2px dashed #4a4a60;
+    border-radius: 9px;
     background: #20202d;
-    color: #aaa;
-    border: 2px dashed #45455a;
-    border-radius: 8px;
-    cursor: pointer;
+    color: #b8b8c8;
     font-size: 28px;
+    cursor: pointer;
 }
 
-/* MODAL */
+.addFrame:hover {
+    border-color: #a96cff;
+    background: #292939;
+    color: white;
+}
+
+/* =========================
+   MODAL
+========================= */
 
 .modal {
-    display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,.7);
     z-index: 100;
+    display: none;
     align-items: center;
     justify-content: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.75);
 }
 
 .modalBox {
-    width: 360px;
+    width: min(380px, 100%);
+    padding: 23px;
+    border: 1px solid #3c3c50;
+    border-radius: 15px;
     background: #1e1e29;
-    padding: 22px;
-    border-radius: 14px;
-    border: 1px solid #363649;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6);
 }
 
 .modalBox h2 {
-    margin-top: 0;
+    margin: 0 0 19px;
+}
+
+.modalBox label {
+    display: block;
+    margin-bottom: 6px;
+    color: #c8c8d6;
+    font-size: 13px;
 }
 
 .modalBox input {
     width: 100%;
+    margin-bottom: 15px;
+    padding: 11px;
+    border: 1px solid #414157;
+    border-radius: 8px;
+    outline: none;
     background: #111118;
-    border: 1px solid #3c3c50;
     color: white;
-    padding: 10px;
-    border-radius: 7px;
-    margin: 5px 0 14px;
+}
+
+.modalBox input:focus {
+    border-color: #a96cff;
 }
 
 .modalActions {
     display: flex;
-    gap: 8px;
     justify-content: flex-end;
+    gap: 9px;
+    margin-top: 5px;
 }
 
 .modalActions button {
+    padding: 9px 15px;
     border: 0;
-    border-radius: 7px;
-    padding: 9px 14px;
+    border-radius: 8px;
+    color: white;
     cursor: pointer;
 }
 
 .primary {
     background: #7d42da;
-    color: white;
 }
 
 .secondary {
-    background: #343445;
+    background: #373748;
+}
+
+/* =========================
+   TOAST
+========================= */
+
+.toast {
+    position: fixed;
+    z-index: 200;
+    right: 18px;
+    bottom: 170px;
+    max-width: 320px;
+    padding: 12px 16px;
+    border: 1px solid #49495f;
+    border-radius: 10px;
+    background: #252535;
     color: white;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.45);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(14px);
+    transition: 0.2s;
+}
+
+.toast.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 850px) {
+    .sidebar {
+        width: 205px;
+    }
+
+    #pixelCanvas {
+        width: 420px;
+        height: 420px;
+    }
+
+    .topbar {
+        overflow-x: auto;
+    }
+}
+
+@media (max-width: 650px) {
+    .sidebar {
+        display: none;
+    }
+
+    .toolbar {
+        width: 65px;
+        padding: 7px;
+    }
+
+    .tool {
+        width: 49px;
+        height: 49px;
+    }
+
+    .workspace {
+        padding: 18px;
+    }
+
+    #pixelCanvas {
+        width: 330px;
+        height: 330px;
+    }
+
+    .logo {
+        min-width: max-content;
+    }
 }
 </style>
 </head>
@@ -350,43 +547,97 @@ input {
 
 <div id="app">
 
-    <div class="topbar">
+    <header class="topbar">
         <div class="logo">PIXEL ANIMATOR</div>
 
-        <button class="topBtn" onclick="newProject()">New</button>
-        <button class="topBtn" onclick="clearFrame()">Clear</button>
-        <button class="topBtn" onclick="downloadPNG()">Export PNG</button>
-    </div>
+        <button class="topBtn" type="button" onclick="openNewProject()">
+            New
+        </button>
 
-    <div class="main">
+        <button class="topBtn" type="button" onclick="clearFrame()">
+            Clear
+        </button>
 
-        <div class="toolbar">
-            <button class="tool active" data-tool="pencil" title="Pencil">✏️</button>
-            <button class="tool" data-tool="eraser" title="Eraser">⌫</button>
-            <button class="tool" data-tool="fill" title="Fill">🪣</button>
-            <button class="tool" data-tool="picker" title="Color Picker">💧</button>
-        </div>
+        <button class="topBtn" type="button" onclick="downloadPNG()">
+            Export PNG
+        </button>
 
-        <div class="workspace">
+        <button
+            id="gifExportButton"
+            class="topBtn exportGifBtn"
+            type="button"
+            onclick="downloadGIF(this)"
+        >
+            Export GIF
+        </button>
+    </header>
+
+    <main class="main">
+
+        <aside class="toolbar">
+
+            <button
+                class="tool active"
+                type="button"
+                data-tool="pencil"
+                title="Pencil"
+            >
+                ✏️
+            </button>
+
+            <button
+                class="tool"
+                type="button"
+                data-tool="eraser"
+                title="Eraser"
+            >
+                ⌫
+            </button>
+
+            <button
+                class="tool"
+                type="button"
+                data-tool="fill"
+                title="Bucket Fill"
+            >
+                🪣
+            </button>
+
+            <button
+                class="tool"
+                type="button"
+                data-tool="picker"
+                title="Color Picker"
+            >
+                💧
+            </button>
+
+        </aside>
+
+        <section class="workspace">
             <div class="canvasWrap">
                 <canvas id="pixelCanvas"></canvas>
             </div>
-        </div>
+        </section>
 
-        <div class="sidebar">
+        <aside class="sidebar">
 
             <div class="section">
                 <div class="sectionTitle">Color</div>
 
                 <div class="colorRow">
-                    <input id="colorPicker" type="color" value="#ffffff">
+                    <input
+                        id="colorPicker"
+                        type="color"
+                        value="#ffffff"
+                    >
+
                     <span id="colorText">#ffffff</span>
                 </div>
             </div>
 
             <div class="section">
                 <div class="sectionTitle">Palette</div>
-
                 <div class="palette" id="palette"></div>
             </div>
 
@@ -394,66 +645,140 @@ input {
                 <div class="sectionTitle">Animation</div>
 
                 <div class="setting">
-                    <label>FPS: <span id="fpsText">8</span></label>
-                    <input id="fps" type="range" min="1" max="24" value="8">
+                    <label for="fps">
+                        FPS: <span id="fpsText">8</span>
+                    </label>
+
+                    <input
+                        id="fps"
+                        type="range"
+                        min="1"
+                        max="24"
+                        value="8"
+                    >
                 </div>
 
                 <div class="setting">
-                    <label>
+                    <label class="checkboxLabel">
                         <input id="onionSkin" type="checkbox">
-                        Onion Skin
+                        Onion skin
                     </label>
                 </div>
             </div>
 
             <div class="section">
                 <div class="sectionTitle">Canvas</div>
-                <div id="canvasInfo">16 × 16</div>
+
+                <div class="infoBox">
+                    <div id="canvasInfo">16 × 16 pixels</div>
+                    <div>Transparent background</div>
+                    <div>GIF loops forever</div>
+                </div>
             </div>
 
-        </div>
+        </aside>
 
-    </div>
+    </main>
 
-    <div class="timeline">
+    <section class="timeline">
 
         <div class="timelineControls">
-            <button onclick="previousFrame()">◀</button>
-            <button id="playButton" onclick="togglePlay()">▶ Play</button>
-            <button onclick="nextFrame()">▶</button>
 
-            <button onclick="duplicateFrame()">Duplicate</button>
-            <button onclick="deleteFrame()">Delete</button>
+            <button type="button" onclick="previousFrame()">
+                ◀
+            </button>
+
+            <button
+                id="playButton"
+                type="button"
+                onclick="togglePlay()"
+            >
+                ▶ Play
+            </button>
+
+            <button type="button" onclick="nextFrame()">
+                ▶
+            </button>
+
+            <button type="button" onclick="duplicateFrame()">
+                Duplicate
+            </button>
+
+            <button type="button" onclick="deleteFrame()">
+                Delete
+            </button>
+
+            <span id="frameStatus">Frame 1 of 1</span>
+
         </div>
 
         <div id="frames"></div>
 
-    </div>
+    </section>
 
 </div>
 
 <div class="modal" id="newProjectModal">
+
     <div class="modalBox">
 
         <h2>New Pixel Animation</h2>
 
-        <label>Width</label>
-        <input id="newWidth" type="number" min="4" max="128" value="16">
+        <label for="newWidth">Width</label>
 
-        <label>Height</label>
-        <input id="newHeight" type="number" min="4" max="128" value="16">
+        <input
+            id="newWidth"
+            type="number"
+            min="4"
+            max="128"
+            value="16"
+        >
+
+        <label for="newHeight">Height</label>
+
+        <input
+            id="newHeight"
+            type="number"
+            min="4"
+            max="128"
+            value="16"
+        >
 
         <div class="modalActions">
-            <button class="secondary" onclick="closeNewProject()">Cancel</button>
-            <button class="primary" onclick="createNewProject()">Create</button>
+
+            <button
+                class="secondary"
+                type="button"
+                onclick="closeNewProject()"
+            >
+                Cancel
+            </button>
+
+            <button
+                class="primary"
+                type="button"
+                onclick="createNewProject()"
+            >
+                Create
+            </button>
+
         </div>
 
     </div>
+
 </div>
+
+<div class="toast" id="toast"></div>
 
 <script>
 const canvas = document.getElementById("pixelCanvas");
-const ctx = canvas.getContext("2d");
+const ctx = canvas.getContext("2d", {
+    alpha: true
+});
+
+const fpsSlider = document.getElementById("fps");
+const onionSkinCheckbox = document.getElementById("onionSkin");
+const colorPicker = document.getElementById("colorPicker");
 
 const displaySize = 512;
 
@@ -466,9 +791,9 @@ let currentColor = "#ffffff";
 let isDrawing = false;
 let playing = false;
 let playTimer = null;
+let toastTimer = null;
 
 let currentFrame = 0;
-
 let frames = [];
 
 const paletteColors = [
@@ -489,369 +814,482 @@ const paletteColors = [
     "#ffa502"
 ];
 
-function createEmptyFrame() {
+/* =========================
+   PROJECT SETUP
+========================= */
 
+function createEmptyFrame() {
     return Array.from(
-        {length: gridHeight},
+        { length: gridHeight },
         () => Array(gridWidth).fill(null)
     );
-
 }
 
 function setupCanvas() {
-
     canvas.width = displaySize;
     canvas.height = displaySize;
 
-    canvas.style.width = displaySize + "px";
-    canvas.style.height = displaySize + "px";
-
     document.getElementById("canvasInfo").textContent =
-        gridWidth + " × " + gridHeight;
-
+        `${gridWidth} × ${gridHeight} pixels`;
 }
 
 function initialize() {
-
     setupCanvas();
 
-    frames = [createEmptyFrame()];
+    frames = [
+        createEmptyFrame()
+    ];
 
     renderPalette();
     drawCanvas();
     renderFrames();
-
 }
 
-function renderPalette() {
+function showToast(message) {
+    const toast = document.getElementById("toast");
 
+    toast.textContent = message;
+    toast.classList.add("visible");
+
+    clearTimeout(toastTimer);
+
+    toastTimer = setTimeout(() => {
+        toast.classList.remove("visible");
+    }, 2200);
+}
+
+/* =========================
+   PALETTE
+========================= */
+
+function renderPalette() {
     const palette = document.getElementById("palette");
+
     palette.innerHTML = "";
 
     paletteColors.forEach(color => {
+        const swatch = document.createElement("button");
 
-        const swatch = document.createElement("div");
-
+        swatch.type = "button";
         swatch.className = "swatch";
         swatch.style.background = color;
+        swatch.title = color;
 
-        swatch.onclick = () => {
-            currentColor = color;
-            document.getElementById("colorPicker").value = color;
-            document.getElementById("colorText").textContent = color;
-        };
+        swatch.addEventListener("click", () => {
+            setCurrentColor(color);
+        });
 
         palette.appendChild(swatch);
-
     });
-
 }
 
+function setCurrentColor(color) {
+    currentColor = color.toLowerCase();
+
+    colorPicker.value = currentColor;
+
+    document.getElementById("colorText").textContent =
+        currentColor;
+}
+
+/* =========================
+   CANVAS DRAWING
+========================= */
+
 function drawCanvas() {
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
 
-    ctx.clearRect(0,0,canvas.width,canvas.height);
+    const cellWidth = canvas.width / gridWidth;
+    const cellHeight = canvas.height / gridHeight;
 
-    const cellW = canvas.width / gridWidth;
-    const cellH = canvas.height / gridHeight;
+    drawCheckerboard(cellWidth, cellHeight);
 
-    // checkerboard background
-    for(let y=0;y<gridHeight;y++) {
-
-        for(let x=0;x<gridWidth;x++) {
-
-            ctx.fillStyle =
-                (x + y) % 2 === 0
-                ? "#d9d9d9"
-                : "#bcbcbc";
-
-            ctx.fillRect(
-                x * cellW,
-                y * cellH,
-                cellW,
-                cellH
-            );
-
-        }
-
-    }
-
-    // onion skin
-    const onion = document.getElementById("onionSkin").checked;
-
-    if(onion && currentFrame > 0 && !playing) {
-
+    if (
+        onionSkinCheckbox.checked &&
+        currentFrame > 0 &&
+        !playing
+    ) {
+        ctx.save();
         ctx.globalAlpha = 0.22;
 
         drawFramePixels(
             frames[currentFrame - 1],
-            cellW,
-            cellH
+            cellWidth,
+            cellHeight
         );
 
-        ctx.globalAlpha = 1;
-
+        ctx.restore();
     }
 
     drawFramePixels(
         frames[currentFrame],
-        cellW,
-        cellH
+        cellWidth,
+        cellHeight
     );
 
-    // grid
-    if(gridWidth <= 64 && gridHeight <= 64) {
-
-        ctx.strokeStyle = "rgba(0,0,0,.18)";
-        ctx.lineWidth = 1;
-
-        for(let x=0;x<=gridWidth;x++) {
-
-            ctx.beginPath();
-            ctx.moveTo(x * cellW,0);
-            ctx.lineTo(x * cellW,canvas.height);
-            ctx.stroke();
-
-        }
-
-        for(let y=0;y<=gridHeight;y++) {
-
-            ctx.beginPath();
-            ctx.moveTo(0,y * cellH);
-            ctx.lineTo(canvas.width,y * cellH);
-            ctx.stroke();
-
-        }
-
-    }
-
+    drawGrid(cellWidth, cellHeight);
 }
 
-function drawFramePixels(frame,cellW,cellH) {
+function drawCheckerboard(cellWidth, cellHeight) {
+    for (let y = 0; y < gridHeight; y++) {
+        for (let x = 0; x < gridWidth; x++) {
+            ctx.fillStyle =
+                (x + y) % 2 === 0
+                    ? "#d9d9d9"
+                    : "#bcbcbc";
 
-    for(let y=0;y<gridHeight;y++) {
+            ctx.fillRect(
+                x * cellWidth,
+                y * cellHeight,
+                cellWidth,
+                cellHeight
+            );
+        }
+    }
+}
 
-        for(let x=0;x<gridWidth;x++) {
-
+function drawFramePixels(
+    frame,
+    cellWidth,
+    cellHeight
+) {
+    for (let y = 0; y < gridHeight; y++) {
+        for (let x = 0; x < gridWidth; x++) {
             const color = frame[y][x];
 
-            if(color !== null) {
-
+            if (color !== null) {
                 ctx.fillStyle = color;
 
                 ctx.fillRect(
-                    x * cellW,
-                    y * cellH,
-                    cellW,
-                    cellH
+                    Math.floor(x * cellWidth),
+                    Math.floor(y * cellHeight),
+                    Math.ceil(cellWidth),
+                    Math.ceil(cellHeight)
                 );
-
             }
-
         }
+    }
+}
 
+function drawGrid(cellWidth, cellHeight) {
+    if (
+        gridWidth > 64 ||
+        gridHeight > 64
+    ) {
+        return;
     }
 
+    ctx.save();
+
+    ctx.strokeStyle = "rgba(0, 0, 0, 0.18)";
+    ctx.lineWidth = 1;
+
+    for (let x = 0; x <= gridWidth; x++) {
+        const position = Math.round(
+            x * cellWidth
+        ) + 0.5;
+
+        ctx.beginPath();
+        ctx.moveTo(position, 0);
+        ctx.lineTo(position, canvas.height);
+        ctx.stroke();
+    }
+
+    for (let y = 0; y <= gridHeight; y++) {
+        const position = Math.round(
+            y * cellHeight
+        ) + 0.5;
+
+        ctx.beginPath();
+        ctx.moveTo(0, position);
+        ctx.lineTo(canvas.width, position);
+        ctx.stroke();
+    }
+
+    ctx.restore();
 }
 
 function getPixelPosition(event) {
-
     const rect = canvas.getBoundingClientRect();
 
+    const clientX =
+        event.touches?.[0]?.clientX ??
+        event.clientX;
+
+    const clientY =
+        event.touches?.[0]?.clientY ??
+        event.clientY;
+
     const x = Math.floor(
-        (event.clientX - rect.left) /
-        rect.width *
+        ((clientX - rect.left) / rect.width) *
         gridWidth
     );
 
     const y = Math.floor(
-        (event.clientY - rect.top) /
-        rect.height *
+        ((clientY - rect.top) / rect.height) *
         gridHeight
     );
 
-    return {x,y};
-
+    return {
+        x: Math.max(
+            0,
+            Math.min(gridWidth - 1, x)
+        ),
+        y: Math.max(
+            0,
+            Math.min(gridHeight - 1, y)
+        )
+    };
 }
 
-function drawAt(x,y) {
-
-    if(
+function drawAt(x, y) {
+    if (
         x < 0 ||
         y < 0 ||
         x >= gridWidth ||
         y >= gridHeight
-    ) return;
-
-    if(currentTool === "pencil") {
-
-        frames[currentFrame][y][x] = currentColor;
-
+    ) {
+        return;
     }
 
-    if(currentTool === "eraser") {
+    if (currentTool === "pencil") {
+        frames[currentFrame][y][x] =
+            currentColor;
+    }
 
-        frames[currentFrame][y][x] = null;
-
+    if (currentTool === "eraser") {
+        frames[currentFrame][y][x] =
+            null;
     }
 
     drawCanvas();
-
 }
 
-canvas.addEventListener("mousedown", event => {
+/* =========================
+   POINTER EVENTS
+========================= */
 
-    const pos = getPixelPosition(event);
+canvas.addEventListener(
+    "pointerdown",
+    event => {
+        event.preventDefault();
 
-    if(currentTool === "fill") {
+        canvas.setPointerCapture(
+            event.pointerId
+        );
 
-        floodFill(pos.x,pos.y,currentColor);
-        drawCanvas();
-        renderFrames();
-        return;
+        const position =
+            getPixelPosition(event);
 
-    }
+        if (currentTool === "fill") {
+            floodFill(
+                position.x,
+                position.y,
+                currentColor
+            );
 
-    if(currentTool === "picker") {
-
-        const color = frames[currentFrame][pos.y][pos.x];
-
-        if(color) {
-
-            currentColor = color;
-
-            document.getElementById("colorPicker").value = color;
-            document.getElementById("colorText").textContent = color;
-
+            drawCanvas();
+            renderFrames();
+            return;
         }
 
+        if (currentTool === "picker") {
+            const color =
+                frames[currentFrame]
+                    [position.y]
+                    [position.x];
+
+            if (color !== null) {
+                setCurrentColor(color);
+            }
+
+            return;
+        }
+
+        isDrawing = true;
+
+        drawAt(
+            position.x,
+            position.y
+        );
+    }
+);
+
+canvas.addEventListener(
+    "pointermove",
+    event => {
+        if (!isDrawing) {
+            return;
+        }
+
+        event.preventDefault();
+
+        const position =
+            getPixelPosition(event);
+
+        drawAt(
+            position.x,
+            position.y
+        );
+    }
+);
+
+function finishDrawing() {
+    if (!isDrawing) {
         return;
-
     }
 
-    isDrawing = true;
+    isDrawing = false;
+    renderFrames();
+}
 
-    drawAt(pos.x,pos.y);
+canvas.addEventListener(
+    "pointerup",
+    finishDrawing
+);
 
-});
+canvas.addEventListener(
+    "pointercancel",
+    finishDrawing
+);
 
-canvas.addEventListener("mousemove", event => {
+window.addEventListener(
+    "pointerup",
+    finishDrawing
+);
 
-    if(!isDrawing) return;
+/* =========================
+   FLOOD FILL
+========================= */
 
-    const pos = getPixelPosition(event);
-
-    drawAt(pos.x,pos.y);
-
-});
-
-window.addEventListener("mouseup", () => {
-
-    if(isDrawing) {
-
-        isDrawing = false;
-        renderFrames();
-
-    }
-
-});
-
-function floodFill(startX,startY,newColor) {
-
+function floodFill(
+    startX,
+    startY,
+    newColor
+) {
     const frame = frames[currentFrame];
-
     const oldColor = frame[startY][startX];
 
-    if(oldColor === newColor) return;
+    if (oldColor === newColor) {
+        return;
+    }
 
-    const stack = [[startX,startY]];
+    const stack = [
+        [startX, startY]
+    ];
 
-    while(stack.length) {
+    while (stack.length > 0) {
+        const [x, y] = stack.pop();
 
-        const [x,y] = stack.pop();
-
-        if(
+        if (
             x < 0 ||
             y < 0 ||
             x >= gridWidth ||
             y >= gridHeight
-        ) continue;
+        ) {
+            continue;
+        }
 
-        if(frame[y][x] !== oldColor) continue;
+        if (frame[y][x] !== oldColor) {
+            continue;
+        }
 
         frame[y][x] = newColor;
 
         stack.push(
-            [x + 1,y],
-            [x - 1,y],
-            [x,y + 1],
-            [x,y - 1]
+            [x + 1, y],
+            [x - 1, y],
+            [x, y + 1],
+            [x, y - 1]
         );
-
     }
-
 }
 
-document.querySelectorAll(".tool").forEach(button => {
+/* =========================
+   TOOL CONTROLS
+========================= */
 
-    button.addEventListener("click", () => {
+document
+    .querySelectorAll(".tool")
+    .forEach(button => {
+        button.addEventListener(
+            "click",
+            () => {
+                document
+                    .querySelectorAll(".tool")
+                    .forEach(toolButton => {
+                        toolButton.classList.remove(
+                            "active"
+                        );
+                    });
 
-        document
-            .querySelectorAll(".tool")
-            .forEach(b => b.classList.remove("active"));
+                button.classList.add("active");
 
-        button.classList.add("active");
-
-        currentTool = button.dataset.tool;
-
+                currentTool =
+                    button.dataset.tool;
+            }
+        );
     });
 
-});
-
-document
-.getElementById("colorPicker")
-.addEventListener("input",event => {
-
-    currentColor = event.target.value;
-
-    document.getElementById("colorText").textContent =
-        currentColor;
-
-});
-
-document
-.getElementById("onionSkin")
-.addEventListener("change",drawCanvas);
-
-const fpsSlider = document.getElementById("fps");
-
-fpsSlider.addEventListener("input", () => {
-
-    document.getElementById("fpsText").textContent =
-        fpsSlider.value;
-
-    if(playing) {
-
-        stopPlayback();
-        startPlayback();
-
+colorPicker.addEventListener(
+    "input",
+    event => {
+        setCurrentColor(
+            event.target.value
+        );
     }
+);
 
-});
+onionSkinCheckbox.addEventListener(
+    "change",
+    drawCanvas
+);
+
+fpsSlider.addEventListener(
+    "input",
+    () => {
+        document.getElementById(
+            "fpsText"
+        ).textContent = fpsSlider.value;
+
+        if (playing) {
+            stopPlayback();
+            startPlayback();
+        }
+    }
+);
+
+/* =========================
+   FRAME TIMELINE
+========================= */
 
 function renderFrames() {
-
-    const container = document.getElementById("frames");
+    const container =
+        document.getElementById("frames");
 
     container.innerHTML = "";
 
-    frames.forEach((frame,index) => {
+    frames.forEach((frame, index) => {
+        const frameElement =
+            document.createElement("button");
 
-        const element =
-            document.createElement("div");
+        frameElement.type = "button";
 
-        element.className =
+        frameElement.className =
             "frame" +
-            (index === currentFrame ? " active" : "");
+            (
+                index === currentFrame
+                    ? " active"
+                    : ""
+            );
+
+        frameElement.title =
+            `Frame ${index + 1}`;
 
         const preview =
             document.createElement("canvas");
@@ -859,22 +1297,40 @@ function renderFrames() {
         preview.width = gridWidth;
         preview.height = gridHeight;
 
-        const pctx =
+        const previewContext =
             preview.getContext("2d");
 
-        for(let y=0;y<gridHeight;y++) {
+        previewContext.clearRect(
+            0,
+            0,
+            gridWidth,
+            gridHeight
+        );
 
-            for(let x=0;x<gridWidth;x++) {
+        for (
+            let y = 0;
+            y < gridHeight;
+            y++
+        ) {
+            for (
+                let x = 0;
+                x < gridWidth;
+                x++
+            ) {
+                const color = frame[y][x];
 
-                if(frame[y][x]) {
+                if (color !== null) {
+                    previewContext.fillStyle =
+                        color;
 
-                    pctx.fillStyle = frame[y][x];
-                    pctx.fillRect(x,y,1,1);
-
+                    previewContext.fillRect(
+                        x,
+                        y,
+                        1,
+                        1
+                    );
                 }
-
             }
-
         }
 
         const label =
@@ -883,50 +1339,62 @@ function renderFrames() {
         label.className = "frameNumber";
         label.textContent = index + 1;
 
-        element.appendChild(preview);
-        element.appendChild(label);
+        frameElement.appendChild(preview);
+        frameElement.appendChild(label);
 
-        element.onclick = () => {
+        frameElement.addEventListener(
+            "click",
+            () => {
+                currentFrame = index;
 
-            currentFrame = index;
+                drawCanvas();
+                renderFrames();
+            }
+        );
 
-            drawCanvas();
-            renderFrames();
-
-        };
-
-        container.appendChild(element);
-
+        container.appendChild(
+            frameElement
+        );
     });
 
-    const add =
+    const addButton =
         document.createElement("button");
 
-    add.className = "addFrame";
-    add.textContent = "+";
-    add.title = "Add Frame";
+    addButton.type = "button";
+    addButton.className = "addFrame";
+    addButton.textContent = "+";
+    addButton.title = "Add empty frame";
 
-    add.onclick = addFrame;
+    addButton.addEventListener(
+        "click",
+        addFrame
+    );
 
-    container.appendChild(add);
+    container.appendChild(addButton);
 
+    document.getElementById(
+        "frameStatus"
+    ).textContent =
+        `Frame ${currentFrame + 1} of ${frames.length}`;
 }
 
 function addFrame() {
+    frames.push(
+        createEmptyFrame()
+    );
 
-    frames.push(createEmptyFrame());
-
-    currentFrame = frames.length - 1;
+    currentFrame =
+        frames.length - 1;
 
     drawCanvas();
     renderFrames();
-
 }
 
 function duplicateFrame() {
-
     const duplicate =
-        frames[currentFrame].map(row => [...row]);
+        frames[currentFrame].map(
+            row => [...row]
+        );
 
     frames.splice(
         currentFrame + 1,
@@ -938,155 +1406,170 @@ function duplicateFrame() {
 
     drawCanvas();
     renderFrames();
-
 }
 
 function deleteFrame() {
-
-    if(frames.length === 1) {
-
-        frames[0] = createEmptyFrame();
+    if (frames.length === 1) {
+        frames[0] =
+            createEmptyFrame();
 
         drawCanvas();
         renderFrames();
-
         return;
-
     }
 
-    frames.splice(currentFrame,1);
+    frames.splice(
+        currentFrame,
+        1
+    );
 
-    currentFrame =
-        Math.min(
-            currentFrame,
-            frames.length - 1
-        );
+    currentFrame = Math.min(
+        currentFrame,
+        frames.length - 1
+    );
 
     drawCanvas();
     renderFrames();
-
 }
 
 function previousFrame() {
-
     currentFrame--;
 
-    if(currentFrame < 0)
-        currentFrame = frames.length - 1;
+    if (currentFrame < 0) {
+        currentFrame =
+            frames.length - 1;
+    }
 
     drawCanvas();
     renderFrames();
-
 }
 
 function nextFrame() {
-
     currentFrame =
         (currentFrame + 1) %
         frames.length;
 
     drawCanvas();
     renderFrames();
-
 }
 
+/* =========================
+   PLAYBACK
+========================= */
+
 function togglePlay() {
-
-    if(playing) {
-
+    if (playing) {
         stopPlayback();
-
     } else {
-
         startPlayback();
-
     }
-
 }
 
 function startPlayback() {
+    if (playing) {
+        return;
+    }
 
     playing = true;
 
-    document.getElementById("playButton")
-        .textContent = "■ Stop";
+    document.getElementById(
+        "playButton"
+    ).textContent = "■ Stop";
 
     const interval =
         1000 /
-        Number(fpsSlider.value);
+        Math.max(
+            1,
+            Number(fpsSlider.value)
+        );
 
-    playTimer = setInterval(() => {
+    playTimer = setInterval(
+        () => {
+            currentFrame =
+                (currentFrame + 1) %
+                frames.length;
 
-        currentFrame =
-            (currentFrame + 1) %
-            frames.length;
-
-        drawCanvas();
-        renderFrames();
-
-    },interval);
-
+            drawCanvas();
+            renderFrames();
+        },
+        interval
+    );
 }
 
 function stopPlayback() {
-
     playing = false;
 
     clearInterval(playTimer);
+    playTimer = null;
 
-    document.getElementById("playButton")
-        .textContent = "▶ Play";
-
-    drawCanvas();
-
-}
-
-function clearFrame() {
-
-    frames[currentFrame] = createEmptyFrame();
+    document.getElementById(
+        "playButton"
+    ).textContent = "▶ Play";
 
     drawCanvas();
     renderFrames();
-
 }
 
-function newProject() {
+/* =========================
+   PROJECT CONTROLS
+========================= */
 
-    document.getElementById("newProjectModal")
-        .style.display = "flex";
+function clearFrame() {
+    frames[currentFrame] =
+        createEmptyFrame();
 
+    drawCanvas();
+    renderFrames();
+}
+
+function openNewProject() {
+    document.getElementById(
+        "newProjectModal"
+    ).style.display = "flex";
 }
 
 function closeNewProject() {
-
-    document.getElementById("newProjectModal")
-        .style.display = "none";
-
+    document.getElementById(
+        "newProjectModal"
+    ).style.display = "none";
 }
 
 function createNewProject() {
+    const widthInput = Number(
+        document.getElementById(
+            "newWidth"
+        ).value
+    );
 
-    gridWidth =
-        Math.max(
-            4,
-            Math.min(
-                128,
-                Number(
-                    document.getElementById("newWidth").value
-                )
-            )
-        );
+    const heightInput = Number(
+        document.getElementById(
+            "newHeight"
+        ).value
+    );
 
-    gridHeight =
-        Math.max(
-            4,
-            Math.min(
-                128,
-                Number(
-                    document.getElementById("newHeight").value
-                )
-            )
-        );
+    gridWidth = Math.max(
+        4,
+        Math.min(
+            128,
+            Number.isFinite(widthInput)
+                ? Math.floor(widthInput)
+                : 16
+        )
+    );
+
+    gridHeight = Math.max(
+        4,
+        Math.min(
+            128,
+            Number.isFinite(heightInput)
+                ? Math.floor(heightInput)
+                : 16
+        )
+    );
+
+    if (playing) {
+        stopPlayback();
+    }
 
     currentFrame = 0;
 
@@ -1095,71 +1578,812 @@ function createNewProject() {
     ];
 
     setupCanvas();
-
     closeNewProject();
-
     drawCanvas();
     renderFrames();
 
+    showToast(
+        `Created ${gridWidth} × ${gridHeight} project`
+    );
 }
 
-function createExportCanvas(frame) {
+/* =========================
+   PNG EXPORT
+========================= */
 
+function createExportCanvas(frame) {
     const exportCanvas =
         document.createElement("canvas");
 
     exportCanvas.width = gridWidth;
     exportCanvas.height = gridHeight;
 
-    const exportCtx =
+    const exportContext =
         exportCanvas.getContext("2d");
 
-    for(let y=0;y<gridHeight;y++) {
+    exportContext.clearRect(
+        0,
+        0,
+        gridWidth,
+        gridHeight
+    );
 
-        for(let x=0;x<gridWidth;x++) {
+    for (
+        let y = 0;
+        y < gridHeight;
+        y++
+    ) {
+        for (
+            let x = 0;
+            x < gridWidth;
+            x++
+        ) {
+            const color = frame[y][x];
 
-            if(frame[y][x]) {
+            if (color !== null) {
+                exportContext.fillStyle =
+                    color;
 
-                exportCtx.fillStyle =
-                    frame[y][x];
-
-                exportCtx.fillRect(
+                exportContext.fillRect(
                     x,
                     y,
                     1,
                     1
                 );
-
             }
-
         }
-
     }
 
     return exportCanvas;
-
 }
 
 function downloadPNG() {
-
     const exportCanvas =
         createExportCanvas(
             frames[currentFrame]
         );
 
+    exportCanvas.toBlob(
+        blob => {
+            if (!blob) {
+                showToast(
+                    "PNG export failed"
+                );
+
+                return;
+            }
+
+            downloadBlob(
+                blob,
+                `pixel-frame-${currentFrame + 1}.png`
+            );
+
+            showToast(
+                "PNG exported successfully"
+            );
+        },
+        "image/png"
+    );
+}
+
+function downloadBlob(blob, fileName) {
+    const url =
+        URL.createObjectURL(blob);
+
     const link =
         document.createElement("a");
 
-    link.download = "pixel-frame-" +
-        (currentFrame + 1) +
-        ".png";
+    link.href = url;
+    link.download = fileName;
 
-    link.href =
-        exportCanvas.toDataURL("image/png");
-
+    document.body.appendChild(link);
     link.click();
+    link.remove();
 
+    setTimeout(
+        () => {
+            URL.revokeObjectURL(url);
+        },
+        1500
+    );
 }
+
+/* =========================
+   GIF EXPORT
+========================= */
+
+function downloadGIF(button) {
+    if (playing) {
+        stopPlayback();
+    }
+
+    const normalText =
+        button.textContent;
+
+    button.disabled = true;
+    button.textContent = "Exporting...";
+
+    /*
+        The small timeout allows the browser
+        to display the exporting message first.
+    */
+    setTimeout(
+        () => {
+            try {
+                const fps = Math.max(
+                    1,
+                    Number(fpsSlider.value)
+                );
+
+                /*
+                    GIF delays use hundredths
+                    of a second.
+                */
+                const delay = Math.max(
+                    2,
+                    Math.round(100 / fps)
+                );
+
+                const gifData =
+                    createAnimatedGIF(
+                        frames,
+                        gridWidth,
+                        gridHeight,
+                        delay
+                    );
+
+                const blob = new Blob(
+                    [gifData],
+                    {
+                        type: "image/gif"
+                    }
+                );
+
+                downloadBlob(
+                    blob,
+                    "pixel-animation.gif"
+                );
+
+                showToast(
+                    `GIF exported with ${frames.length} frame${frames.length === 1 ? "" : "s"}`
+                );
+            } catch (error) {
+                console.error(
+                    "GIF export error:",
+                    error
+                );
+
+                showToast(
+                    "GIF export failed"
+                );
+            } finally {
+                button.disabled = false;
+                button.textContent =
+                    normalText;
+            }
+        },
+        60
+    );
+}
+
+function createAnimatedGIF(
+    animationFrames,
+    width,
+    height,
+    delay
+) {
+    const output = [];
+
+    function writeByte(value) {
+        output.push(
+            value & 255
+        );
+    }
+
+    function writeBytes(values) {
+        for (const value of values) {
+            writeByte(value);
+        }
+    }
+
+    function writeString(value) {
+        for (
+            let index = 0;
+            index < value.length;
+            index++
+        ) {
+            writeByte(
+                value.charCodeAt(index)
+            );
+        }
+    }
+
+    function writeShort(value) {
+        writeByte(value & 255);
+        writeByte(
+            (value >> 8) & 255
+        );
+    }
+
+    /*
+        GIF89a header
+    */
+    writeString("GIF89a");
+
+    /*
+        Logical screen descriptor
+    */
+    writeShort(width);
+    writeShort(height);
+
+    /*
+        Global color table enabled.
+        Color resolution: 8 bits.
+        Color table size: 256 entries.
+    */
+    writeByte(0xF7);
+
+    /*
+        Background color index and
+        pixel aspect ratio.
+    */
+    writeByte(0);
+    writeByte(0);
+
+    /*
+        Write the 256-color palette.
+    */
+    writeBytes(
+        createGIFPalette()
+    );
+
+    /*
+        Netscape looping extension.
+        A loop count of zero means
+        loop forever.
+    */
+    writeByte(0x21);
+    writeByte(0xFF);
+    writeByte(0x0B);
+
+    writeString("NETSCAPE2.0");
+
+    writeByte(0x03);
+    writeByte(0x01);
+    writeShort(0);
+    writeByte(0x00);
+
+    for (
+        const frame of animationFrames
+    ) {
+        const indexedPixels =
+            frameToGIFIndexes(
+                frame,
+                width,
+                height
+            );
+
+        /*
+            Graphic Control Extension
+        */
+        writeByte(0x21);
+        writeByte(0xF9);
+        writeByte(0x04);
+
+        /*
+            Disposal method 2 and
+            transparency enabled.
+        */
+        writeByte(0x09);
+
+        writeShort(delay);
+
+        /*
+            Palette entry zero is
+            transparent.
+        */
+        writeByte(0);
+        writeByte(0);
+
+        /*
+            Image descriptor
+        */
+        writeByte(0x2C);
+
+        writeShort(0);
+        writeShort(0);
+        writeShort(width);
+        writeShort(height);
+
+        /*
+            No local color table.
+        */
+        writeByte(0);
+
+        /*
+            LZW minimum code size.
+        */
+        writeByte(8);
+
+        const compressed =
+            gifLZWEncode(
+                indexedPixels,
+                8
+            );
+
+        /*
+            Split compressed data into
+            GIF data blocks.
+        */
+        let offset = 0;
+
+        while (
+            offset < compressed.length
+        ) {
+            const blockSize = Math.min(
+                255,
+                compressed.length - offset
+            );
+
+            writeByte(blockSize);
+
+            for (
+                let index = 0;
+                index < blockSize;
+                index++
+            ) {
+                writeByte(
+                    compressed[
+                        offset + index
+                    ]
+                );
+            }
+
+            offset += blockSize;
+        }
+
+        /*
+            End of image data.
+        */
+        writeByte(0);
+    }
+
+    /*
+        GIF trailer
+    */
+    writeByte(0x3B);
+
+    return new Uint8Array(output);
+}
+
+/* =========================
+   GIF COLOR PALETTE
+========================= */
+
+function createGIFPalette() {
+    const palette = [];
+
+    /*
+        Palette entry zero is
+        reserved for transparency.
+    */
+    palette.push(0, 0, 0);
+
+    /*
+        Remaining entries use an
+        RGB332 color palette.
+    */
+    for (
+        let index = 1;
+        index < 256;
+        index++
+    ) {
+        const redBits =
+            (index >> 5) & 7;
+
+        const greenBits =
+            (index >> 2) & 7;
+
+        const blueBits =
+            index & 3;
+
+        const red = Math.round(
+            redBits * 255 / 7
+        );
+
+        const green = Math.round(
+            greenBits * 255 / 7
+        );
+
+        const blue = Math.round(
+            blueBits * 255 / 3
+        );
+
+        palette.push(
+            red,
+            green,
+            blue
+        );
+    }
+
+    return palette;
+}
+
+function frameToGIFIndexes(
+    frame,
+    width,
+    height
+) {
+    const indexes =
+        new Uint8Array(
+            width * height
+        );
+
+    let outputIndex = 0;
+
+    for (
+        let y = 0;
+        y < height;
+        y++
+    ) {
+        for (
+            let x = 0;
+            x < width;
+            x++
+        ) {
+            const color = frame[y][x];
+
+            if (color === null) {
+                indexes[outputIndex++] = 0;
+                continue;
+            }
+
+            const rgb =
+                hexToRGB(color);
+
+            const redLevel =
+                Math.round(
+                    rgb.r * 7 / 255
+                );
+
+            const greenLevel =
+                Math.round(
+                    rgb.g * 7 / 255
+                );
+
+            const blueLevel =
+                Math.round(
+                    rgb.b * 3 / 255
+                );
+
+            let paletteIndex =
+                (redLevel << 5) |
+                (greenLevel << 2) |
+                blueLevel;
+
+            /*
+                Entry zero means transparent.
+                Move pure black to entry one.
+            */
+            if (paletteIndex === 0) {
+                paletteIndex = 1;
+            }
+
+            indexes[outputIndex++] =
+                paletteIndex;
+        }
+    }
+
+    return indexes;
+}
+
+function hexToRGB(hex) {
+    let cleanHex =
+        hex.replace("#", "");
+
+    if (cleanHex.length === 3) {
+        cleanHex =
+            cleanHex[0] +
+            cleanHex[0] +
+            cleanHex[1] +
+            cleanHex[1] +
+            cleanHex[2] +
+            cleanHex[2];
+    }
+
+    const numericColor =
+        Number.parseInt(
+            cleanHex,
+            16
+        );
+
+    return {
+        r:
+            (numericColor >> 16) &
+            255,
+
+        g:
+            (numericColor >> 8) &
+            255,
+
+        b:
+            numericColor &
+            255
+    };
+}
+
+/* =========================
+   GIF LZW COMPRESSION
+========================= */
+
+function gifLZWEncode(
+    pixels,
+    minimumCodeSize
+) {
+    const clearCode =
+        1 << minimumCodeSize;
+
+    const endCode =
+        clearCode + 1;
+
+    const firstAvailableCode =
+        endCode + 1;
+
+    const bytes = [];
+
+    let currentByte = 0;
+    let currentBitPosition = 0;
+
+    let codeSize;
+    let nextCode;
+    let dictionary;
+
+    function resetDictionary() {
+        dictionary = new Map();
+
+        codeSize =
+            minimumCodeSize + 1;
+
+        nextCode =
+            firstAvailableCode;
+    }
+
+    function writeCode(code) {
+        for (
+            let bit = 0;
+            bit < codeSize;
+            bit++
+        ) {
+            if (
+                code &
+                (1 << bit)
+            ) {
+                currentByte |=
+                    1 <<
+                    currentBitPosition;
+            }
+
+            currentBitPosition++;
+
+            if (
+                currentBitPosition === 8
+            ) {
+                bytes.push(currentByte);
+
+                currentByte = 0;
+                currentBitPosition = 0;
+            }
+        }
+    }
+
+    resetDictionary();
+    writeCode(clearCode);
+
+    if (pixels.length === 0) {
+        writeCode(endCode);
+
+        if (
+            currentBitPosition > 0
+        ) {
+            bytes.push(currentByte);
+        }
+
+        return new Uint8Array(
+            bytes
+        );
+    }
+
+    let prefix =
+        String(pixels[0]);
+
+    for (
+        let index = 1;
+        index < pixels.length;
+        index++
+    ) {
+        const suffix =
+            pixels[index];
+
+        const sequence =
+            prefix + "," + suffix;
+
+        if (
+            dictionary.has(sequence)
+        ) {
+            prefix = sequence;
+            continue;
+        }
+
+        writeCode(
+            dictionaryCode(
+                prefix,
+                dictionary
+            )
+        );
+
+        if (nextCode < 4096) {
+            dictionary.set(
+                sequence,
+                nextCode
+            );
+
+            nextCode++;
+
+            if (
+                nextCode ===
+                    (1 << codeSize) &&
+                codeSize < 12
+            ) {
+                codeSize++;
+            }
+        } else {
+            writeCode(clearCode);
+            resetDictionary();
+        }
+
+        prefix =
+            String(suffix);
+    }
+
+    writeCode(
+        dictionaryCode(
+            prefix,
+            dictionary
+        )
+    );
+
+    writeCode(endCode);
+
+    if (
+        currentBitPosition > 0
+    ) {
+        bytes.push(currentByte);
+    }
+
+    return new Uint8Array(bytes);
+}
+
+function dictionaryCode(
+    sequence,
+    dictionary
+) {
+    if (
+        !sequence.includes(",")
+    ) {
+        return Number(sequence);
+    }
+
+    const code =
+        dictionary.get(sequence);
+
+    if (code === undefined) {
+        throw new Error(
+            "Invalid GIF dictionary sequence"
+        );
+    }
+
+    return code;
+}
+
+/* =========================
+   KEYBOARD SHORTCUTS
+========================= */
+
+window.addEventListener(
+    "keydown",
+    event => {
+        const activeTag =
+            document.activeElement
+                ?.tagName
+                ?.toLowerCase();
+
+        if (
+            activeTag === "input"
+        ) {
+            return;
+        }
+
+        if (event.key === " ") {
+            event.preventDefault();
+            togglePlay();
+        }
+
+        if (
+            event.key ===
+            "ArrowLeft"
+        ) {
+            previousFrame();
+        }
+
+        if (
+            event.key ===
+            "ArrowRight"
+        ) {
+            nextFrame();
+        }
+
+        if (
+            event.key.toLowerCase() ===
+            "b"
+        ) {
+            selectTool("pencil");
+        }
+
+        if (
+            event.key.toLowerCase() ===
+            "e"
+        ) {
+            selectTool("eraser");
+        }
+
+        if (
+            event.key.toLowerCase() ===
+            "f"
+        ) {
+            selectTool("fill");
+        }
+
+        if (
+            event.key.toLowerCase() ===
+            "i"
+        ) {
+            selectTool("picker");
+        }
+    }
+);
+
+function selectTool(toolName) {
+    const button =
+        document.querySelector(
+            `[data-tool="${toolName}"]`
+        );
+
+    if (button) {
+        button.click();
+    }
+}
+
+/* =========================
+   MODAL CLOSING
+========================= */
+
+document.getElementById(
+    "newProjectModal"
+).addEventListener(
+    "click",
+    event => {
+        if (
+            event.target.id ===
+            "newProjectModal"
+        ) {
+            closeNewProject();
+        }
+    }
+);
+
+/* =========================
+   START APP
+========================= */
 
 initialize();
 </script>
